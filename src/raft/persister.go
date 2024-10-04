@@ -68,3 +68,18 @@ func (ps *Persister) SnapshotSize() int {
 	defer ps.mu.Unlock()
 	return len(ps.snapshot)
 }
+
+func (ps *Persister) SaveRaftState(state []byte) {
+	ps.mu.Lock()
+	defer ps.mu.Unlock()
+	ps.raftstate = clone(state)
+}
+
+// Save both Raft status and K/V snapshot as a single atomic action,
+// to help avoid them getting out of sync.
+func (ps *Persister) SaveStateAndSnapshot(state []byte, snapshot []byte) {
+	ps.mu.Lock()
+	defer ps.mu.Unlock()
+	ps.snapshot = clone(snapshot)
+	ps.raftstate = clone(state)
+}
