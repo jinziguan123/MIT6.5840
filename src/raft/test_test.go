@@ -139,7 +139,7 @@ func TestBasicAgree2B(t *testing.T) {
 
 		xindex := cfg.one(index*100, servers, false)
 		if xindex != index {
-			t.Fatalf("got index %v but expected %v", xindex, index)
+			t.Fatalf("got getLogByIndex %v but expected %v", xindex, index)
 		}
 	}
 
@@ -164,7 +164,7 @@ func TestRPCBytes2B(t *testing.T) {
 		cmd := randstring(5000)
 		xindex := cfg.one(cmd, servers, false)
 		if xindex != index {
-			t.Fatalf("got index %v but expected %v", xindex, index)
+			t.Fatalf("got getLogByIndex %v but expected %v", xindex, index)
 		}
 		sent += int64(len(cmd))
 	}
@@ -210,7 +210,7 @@ func TestFollowerFailure2B(t *testing.T) {
 		t.Fatalf("leader rejected Start()")
 	}
 	if index != 4 {
-		t.Fatalf("expected index 4, got %v", index)
+		t.Fatalf("expected getLogByIndex 4, got %v", index)
 	}
 
 	time.Sleep(2 * RaftElectionTimeout)
@@ -320,7 +320,7 @@ func TestFailNoAgree2B(t *testing.T) {
 		t.Fatalf("leader rejected Start()")
 	}
 	if index != 2 {
-		t.Fatalf("expected index 2, got %v", index)
+		t.Fatalf("expected getLogByIndex 2, got %v", index)
 	}
 
 	time.Sleep(2 * RaftElectionTimeout)
@@ -336,14 +336,14 @@ func TestFailNoAgree2B(t *testing.T) {
 	cfg.connect((leader + 3) % servers)
 
 	// the disconnected majority may have chosen a leader from
-	// among their own ranks, forgetting index 2.
+	// among their own ranks, forgetting getLogByIndex 2.
 	leader2 := cfg.checkOneLeader()
 	index2, _, ok2 := cfg.rafts[leader2].Start(30)
 	if ok2 == false {
 		t.Fatalf("leader2 rejected Start()")
 	}
 	if index2 < 2 || index2 > 3 {
-		t.Fatalf("unexpected index %v", index2)
+		t.Fatalf("unexpected getLogByIndex %v", index2)
 	}
 
 	cfg.one(1000, servers, true)
@@ -470,7 +470,7 @@ func TestRejoin2B(t *testing.T) {
 	cfg.rafts[leader1].Start(103)
 	cfg.rafts[leader1].Start(104)
 
-	// new leader commits, also for index=2
+	// new leader commits, also for getLogByIndex=2
 	cfg.one(103, 2, true)
 
 	// new leader network failure
@@ -627,7 +627,7 @@ loop:
 					// term changed -- try again
 					continue loop
 				}
-				t.Fatalf("wrong value %v committed for index %v; expected %v\n", cmd, starti+i, cmds)
+				t.Fatalf("wrong value %v committed for getLogByIndex %v; expected %v\n", cmd, starti+i, cmds)
 			}
 		}
 
@@ -1217,7 +1217,7 @@ func TestSnapshotAllCrash2D(t *testing.T) {
 
 		index2 := cfg.one(rand.Int(), servers, true)
 		if index2 < index1+1 {
-			t.Fatalf("index decreased from %v to %v", index1, index2)
+			t.Fatalf("getLogByIndex decreased from %v to %v", index1, index2)
 		}
 	}
 	cfg.end()
