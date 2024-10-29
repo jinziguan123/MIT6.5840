@@ -66,7 +66,6 @@ func (kv *KVServer) Get(args *GetArgs, reply *GetReply) {
 	defer func() {
 		DPrintf("kvserver[%d]: 返回Get RPC请求,args=[%v];Reply=[%v]\n", kv.me, args, reply)
 	}()
-
 	DPrintf("kvserver[%d]: 接收Get RPC请求,args=[%v]\n", kv.me, args)
 
 	// 1.先判断该命令是否已经被执行过了
